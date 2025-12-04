@@ -1,117 +1,57 @@
-from fastapi import APIRouter, Request, Depends, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy.orm import Session
-import crud, schemas
-from database import get_db
-from supabase_client import upload_image_to_supabase
+{% extends "base.html" %}
+{% block content %}
+<div class="level">
+    <h1 class="title">Personajes</h1>
+    <a href="/characters/new" class="button is-primary">Nuevo Personaje</a>
+</div>
 
-router = APIRouter(tags=["Web Pages"])
+<form method="get">
+    <div class="field has-addons">
+        <div class="control">
+            <input class="input" type="text" name="q" placeholder="Buscar..." value="{{ q }}">
+        </div>
+        <div class="control">
+            <button class="button is-primary">Buscar</button>
+        </div>
+    </div>
+</form>
 
-# Página de inicio
-@router.get("/", response_class=HTMLResponse)
-def home(request: Request, db: Session = Depends(get_db), q: str = ""):
-    characters = crud.get_characters(db, q=q)
-    return request.app.state.templates.TemplateResponse("index.html", {
-        "request": request,
-        "characters": characters
-    })
+<table class="table table-marvel is-fullwidth">
+<thead>
+<tr>
+    <th>Imagen</th>
+    <th>Nombre</th>
+    <th>Alias</th>
+    <th>Alineamiento</th>
+    <th>Descripción</th>
+    <th>Acciones</th>
+</tr>
+</thead>
 
-# Listar personajes
-@router.get("/characters", response_class=HTMLResponse)
-def characters_page(request: Request, db: Session = Depends(get_db), q: str = ""):
-    characters = crud.get_characters(db, q=q)
-    return request.app.state.templates.TemplateResponse(
-        "characters_list.html",
-        {"request": request, "characters": characters, "q": q}
-    )
-
-# Crear personaje (formulario)
-@router.get("/characters/new", response_class=HTMLResponse)
-def new_character_page(request: Request):
-    return request.app.state.templates.TemplateResponse("characters_new.html", {"request": request})
-
-# Crear personaje (POST)
-@router.post("/characters/new")
-async def create_character(
-    request: Request,
-    name: str = Form(...),
-    alias: str = Form(None),
-    alignment: str = Form(...),
-    description: str = Form(None),
-    image: UploadFile = File(None),
-    db: Session = Depends(get_db)
-):
-    image_filename = None
-    image_url = None
-    if image:
-        content = await image.read()
-        safe_name = f"characters/{name.replace(' ', '_')}_{image.filename}"
-        image_url = upload_image_to_supabase(content, safe_name, content_type=image.content_type)
-        image_filename = image.filename
-
-    character_data = schemas.CharacterCreate(
-        name=name,
-        alias=alias,
-        alignment=alignment,
-        description=description,
-        active=True
-    )
-    crud.create_character(db, character_data, image_filename=image_filename, image_url=image_url)
-    return RedirectResponse(url="/characters", status_code=303)
-
-# Editar personaje (formulario)
-@router.get("/characters/edit/{character_id}", response_class=HTMLResponse)
-def edit_character_page(character_id: int, request: Request, db: Session = Depends(get_db)):
-    character = crud.get_character(db, character_id)
-    if not character:
-        return RedirectResponse(url="/characters", status_code=303)
-    return request.app.state.templates.TemplateResponse(
-        "characters_edit.html",
-        {"request": request, "character": character}
-    )
-
-# Actualizar personaje (POST)
-@router.post("/characters/edit/{character_id}")
-async def update_character_page(
-    character_id: int,
-    request: Request,
-    name: str = Form(...),
-    alias: str = Form(None),
-    alignment: str = Form(...),
-    description: str = Form(None),
-    image: UploadFile = File(None),
-    db: Session = Depends(get_db)
-):
-    image_filename = None
-    image_url = None
-    if image:
-        content = await image.read()
-        safe_name = f"characters/{name.replace(' ', '_')}_{image.filename}"
-        image_url = upload_image_to_supabase(content, safe_name, content_type=image.content_type)
-        image_filename = image.filename
-
-    character_data = schemas.CharacterCreate(
-        name=name,
-        alias=alias,
-        alignment=alignment,
-        description=description,
-        active=True
-    )
-    crud.update_character(db, character_id, character_data)
-
-    # Actualizar imagen si se subió
-    db_character = crud.get_character(db, character_id)
-    if image_filename:
-        db_character.image_filename = image_filename
-    if image_url:
-        db_character.image_url = image_url
-    db.commit()
-    db.refresh(db_character)
-
-    return RedirectResponse(url="/characters", status_code=303)
-
-# Eliminar personaje (soft delete)
-@router.post("/characters/delete/{character_id}")
-def delete_character_page(character_id: int, db: Session = Depends(get_db)):
-    crud.soft_delete_character(db, character_id)
-    return RedirectResponse(url="/characters", status_code=303)
+<tbody>
+{% for character in characters %}
+<tr>
+    <td>
+        <figure class="image-table">
+            {% if character.image_url %}
+                <img src="{{ character.image_url }}" alt="{{ character.name }}">
+            {% else %}
+                <img src="/static/no-image.png" alt="Sin imagen">
+            {% endif %}
+        </figure>
+    </td>
+    <td>{{ character.name }}</td>
+    <td>{{ character.alias or '-' }}</td>
+    <td>{{ character.alignment or '-' }}</td>
+    <td>{{ character.description or '-' }}</td>
+    <td>
+        <a href="/characters/edit/{{ character.id }}" class="button is-small is-info">Editar</a>
+        <form method="post" action="/characters/delete/{{ character.id }}" style="display:inline;">
+            <button class="button is-small is-danger" type="submit">Eliminar</button>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
