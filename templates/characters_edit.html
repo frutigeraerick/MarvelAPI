@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="title">Editar Personaje</h1>
+<form action="/characters/edit/{{ character.id }}" method="post" enctype="multipart/form-data">
+    <div class="field">
+        <label class="label">Nombre</label>
+        <input class="input" type="text" name="name" value="{{ character.name }}" required>
+    </div>
+    <div class="field">
+        <label class="label">Alias</label>
+        <input class="input" type="text" name="alias" value="{{ character.alias }}">
+    </div>
+    <div class="field">
+        <label class="label">Alineamiento</label>
+        <input class="input" type="text" name="alignment" value="{{ character.alignment }}" required>
+    </div>
+    <div class="field">
+        <label class="label">Descripción</label>
+        <textarea class="textarea" name="description">{{ character.description }}</textarea>
+    </div>
+    <div class="field">
+        <label class="label">Imagen</label>
+        <input type="file" name="image">
+    </div>
+    <button class="button is-primary" type="submit">Guardar Cambios</button>
+</form>
+{% endblock %}
