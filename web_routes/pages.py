@@ -9,16 +9,11 @@ from supabase_client import upload_image_to_supabase
 router = APIRouter(tags=["Web Pages"])
 
 @router.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return request.app.state.templates.TemplateResponse("index.html", {"request": request})
-
-@router.get("/characters", response_class=HTMLResponse)
-def characters_page(request: Request, db: Session = Depends(get_db), q: str = ""):
+def home(request: Request, db: Session = Depends(get_db), q: str = ""):
     characters = crud.get_characters(db, q=q)
-    return request.app.state.templates.TemplateResponse("characters_list.html", {
+    return request.app.state.templates.TemplateResponse("index.html", {
         "request": request,
-        "characters": characters,
-        "q": q
+        "characters": characters
     })
 
 @router.get("/characters/new", response_class=HTMLResponse)
