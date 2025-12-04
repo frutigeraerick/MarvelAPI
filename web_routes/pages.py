@@ -58,6 +58,59 @@ async def create_character(
     crud.create_character(db, character_data, image_filename=image_filename, image_url=image_url)
     return RedirectResponse(url="/characters", status_code=303)
 
+# -------------------- EDITAR PERSONAJE --------------------
+@router.get("/characters/edit/{character_id}", response_class=HTMLResponse)
+def edit_character_page(request: Request, character_id: int, db: Session = Depends(get_db)):
+    character = crud.get_character(db, character_id)
+    if not character:
+        return HTMLResponse("Personaje no encontrado", status_code=404)
+    return request.app.state.templates.TemplateResponse("characters_edit.html", {
+        "request": request,
+        "character": character
+    })
+
+@router.post("/characters/edit/{character_id}")
+async def edit_character(
+    request: Request,
+    character_id: int,
+    name: str = Form(...),
+    alias: str = Form(None),
+    alignment: str = Form(...),
+    description: str = Form(None),
+    image: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
+    character_data = schemas.CharacterCreate(
+        name=name,
+        alias=alias,
+        alignment=alignment,
+        description=description,
+        active=True
+    )
+
+    image_filename = None
+    image_url = None
+    if image:
+        content = await image.read()
+        safe_name = f"characters/{name.replace(' ', '_')}_{image.filename}"
+        image_url = upload_image_to_supabase(content, safe_name, content_type=image.content_type)
+        image_filename = image.filename
+
+    db_character = crud.get_character(db, character_id)
+    if not db_character:
+        return HTMLResponse("Personaje no encontrado", status_code=404)
+
+    # Actualizamos los campos
+    updated_character = crud.update_character(db, character_id, character_data)
+    if image_filename:
+        updated_character.image_filename = image_filename
+    if image_url:
+        updated_character.image_url = image_url
+    db.commit()
+    db.refresh(updated_character)
+
+    return RedirectResponse(url="/characters", status_code=303)
+
 @router.post("/characters/delete/{character_id}")
 def delete_character_page(character_id: int, db: Session = Depends(get_db)):
     crud.soft_delete_character(db, character_id)
