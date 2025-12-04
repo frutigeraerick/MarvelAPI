@@ -1,0 +1,107 @@
+Índice
+1. Introducción
+2. Objetivos
+3. Arquitectura del sistema
+4. Modelos de datos y relaciones
+5. API – Endpoints y funcionalidades
+6. Frontend – Rutas HTML
+7. Gestión de imágenes con Supabase
+8. Base de datos
+9. Seguridad y variables de entorno
+10. Mejores prácticas y mejoras futuras
+------------------------------------------------------------
+Introducción
+Marvel API es un proyecto desarrollado con FastAPI, SQLAlchemy y PostgreSQL, que permite gestionar personajes, equipos e identidades secretas del universo Marvel.
+El proyecto incluye un frontend HTML usando Jinja2.
+------------------------------------------------------------
+Objetivos
+- Gestionar información de personajes y sus alias.
+- Administrar equipos y sus miembros.
+- Registrar identidades secretas de personajes.
+- Vincular personajes con equipos.
+- Permitir carga de imágenes de personajes y equipos mediante Supabase.
+------------------------------------------------------------
+Arquitectura del sistema
+El proyecto sigue una arquitectura MVC simplificada:
+Componentes principales:
+- Modelo: SQLAlchemy (models.py)
+- Vista: Jinja2 templates (web_routes/pages.py)
+- Controlador: FastAPI routers y CRUD (routers, crud.py)
+- Base de datos: PostgreSQL
+- Almacenamiento de archivos: Supabase
+------------------------------------------------------------
+Modelos de datos y relaciones
+Tablas principales:
+
+Tabla: Character
+Campos principales: id, name, alias, alignment, description, image_url
+Relación: 1:N CharacterTeam, 1:1 SecretIdentity
+
+Tabla: Team
+Campos principales: id, name, founded_date, description, image_url
+Relación: 1:N CharacterTeam
+
+Tabla: SecretIdentity
+Campos principales: id, real_name, birth_date, place_of_birth, character_id
+Relación: 1:1 Character
+
+Tabla: CharacterTeam
+Campos principales: id, character_id, team_id
+Relación: N:M Character–Team
+------------------------------------------------------------
+API – Endpoints y funcionalidades
+
+Personajes
+- POST /characters/new → Crear un personaje
+- GET /characters → Listar personajes (con búsqueda por nombre)
+- Soft delete y restauración mediante CRUD
+
+Equipos
+- POST /teams/new → Crear equipo
+- GET /teams → Listar equipos
+- GET/PUT/DELETE /teams/{id} → Gestión de equipo
+
+Identidades secretas
+- POST /identities/new → Crear identidad
+- GET /identities → Listar identidades
+
+Relaciones Personaje–Equipo
+- POST /character_team/new → Crear relación
+- GET /character_team/list → Listar relaciones
+
+------------------------------------------------------------
+Frontend – Rutas HTML
+- / → Página principal
+- /characters → Listado de personajes
+- /characters/new → Formulario de creación
+- /teams → Listado de equipos
+- /teams/new → Formulario de creación
+- /character_team/list → Listado de relaciones
+- /character_team/new → Formulario de creación
+- /identities → Listado de identidades
+- /identities/new → Formulario de creación
+- /dashboard → Estadísticas
+------------------------------------------------------------
+Gestión de imágenes con Supabase
+- Supabase se utiliza para almacenar imágenes de personajes y equipos.
+- Función upload_image_to_supabase(file_bytes, dest_path) retorna URL pública.
+- Se soporta contenido tipo image/jpeg y otros.
+------------------------------------------------------------
+Base de datos – Configuración y reset
+- PostgreSQL configurado en .env.
+- Variables principales: POSTGRESQL_ADDON_URI, POSTGRESQL_ADDON_USER, POSTGRESQL_ADDON_PASSWORD
+------------------------------------------------------------
+Seguridad y variables de entorno
+- .env para credenciales de DB y Supabase.
+- .gitignore excluye .env y archivos temporales.
+- Validaciones en schemas.py con Pydantic.
+- Manejo de errores en CRUD y rutas.
+------------------------------------------------------------
+Mejores prácticas y mejoras futuras
+- Validar tamaño y tipo de imagen antes de subir.
+- Agregar gráficos dinámicos en dashboard.
+- Mejorar manejo de errores y respuestas API.
+
+
+
+
