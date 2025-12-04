@@ -1,21 +1,25 @@
 from fastapi import APIRouter, Request, Depends, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
-import os
 import crud, schemas
 from database import get_db
 from supabase_client import upload_image_to_supabase
 
 router = APIRouter(tags=["Web Pages"])
 
+# Página de inicio mostrando todos los personajes
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request, db: Session = Depends(get_db), q: str = ""):
-    characters = crud.get_characters(db, q=q)
-    return request.app.state.templates.TemplateResponse("index.html", {
-        "request": request,
-        "characters": characters
-    })
+    characters = crud.get_characters(db, q=q)  # Trae todos los personajes activos
+    return request.app.state.templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "characters": characters
+        }
+    )
 
+# Crear un nuevo personaje
 @router.get("/characters/new", response_class=HTMLResponse)
 def new_character_page(request: Request):
     return request.app.state.templates.TemplateResponse("characters_new.html", {"request": request})
@@ -48,6 +52,22 @@ async def create_character(
     new_char = crud.create_character(db, character_data, image_filename=image_filename, image_url=image_url)
     return RedirectResponse(url="/characters", status_code=303)
 
+# Listar personajes
+@router.get("/characters", response_class=HTMLResponse)
+def characters_page(request: Request, db: Session = Depends(get_db), q: str = ""):
+    characters = crud.get_characters(db, q=q)
+    return request.app.state.templates.TemplateResponse(
+        "characters_list.html",
+        {"request": request, "characters": characters, "q": q}
+    )
+
+# Borrar personaje (soft delete)
+@router.post("/characters/delete/{character_id}")
+def delete_character_page(character_id: int, db: Session = Depends(get_db)):
+    crud.soft_delete_character(db, character_id)
+    return RedirectResponse(url="/characters", status_code=303)
+
+# Equipos
 @router.get("/teams", response_class=HTMLResponse)
 def teams_page(request: Request, db: Session = Depends(get_db), q: str = ""):
     teams = crud.get_teams(db, q=q)
@@ -56,11 +76,6 @@ def teams_page(request: Request, db: Session = Depends(get_db), q: str = ""):
         "teams": teams,
         "q": q
     })
-
-@router.post("/characters/delete/{character_id}")
-def delete_character_page(character_id: int, db: Session = Depends(get_db)):
-    crud.soft_delete_character(db, character_id)
-    return RedirectResponse(url="/characters", status_code=303)
 
 @router.get("/teams/new", response_class=HTMLResponse)
 def new_team_page(request: Request):
@@ -95,6 +110,7 @@ async def create_team_page(
 
     return RedirectResponse(url="/teams", status_code=303)
 
+# Relaciones personaje-equipo
 @router.get("/character_team/list", response_class=HTMLResponse)
 def character_team_list_page(request: Request, db: Session = Depends(get_db)):
     relations = crud.get_character_teams(db)
@@ -123,6 +139,7 @@ def create_character_team_page(
     crud.create_character_team(db, ct)
     return RedirectResponse(url="/character_team/list", status_code=303)
 
+# Identidades secretas
 @router.get("/identities", response_class=HTMLResponse)
 def identities_page(request: Request, db: Session = Depends(get_db)):
     identities = crud.get_identities(db)
@@ -159,8 +176,7 @@ def create_identity_page(
 
     return RedirectResponse(url="/identities", status_code=303)
 
-
-
+# Dashboard
 @router.get("/dashboard", response_class=HTMLResponse)
 def dashboard(request: Request, db: Session = Depends(get_db)):
     stats = crud.get_stats(db)
