@@ -24,6 +24,7 @@
     <th>Alias</th>
     <th>Alineamiento</th>
     <th>Descripción</th>
+    <th>Acciones</th> <!-- Nueva columna -->
 </tr>
 </thead>
 
@@ -44,6 +45,13 @@
     <td>{{ character.alias or '-' }}</td>
     <td>{{ character.alignment or '-' }}</td>
     <td>{{ character.description or '-' }}</td>
+
+    <td>
+        <!-- Formulario para eliminar -->
+        <form action="/characters/delete/{{ character.id }}" method="post" style="display:inline;">
+            <button class="button is-danger is-small" onclick="return confirm('¿Seguro que quieres eliminar este personaje?');">Eliminar</button>
+        </form>
+    </td>
 </tr>
 {% endfor %}
 </tbody>
