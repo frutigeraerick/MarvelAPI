@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="home-container" style="background: linear-gradient(135deg, black, red); padding:3rem; border-radius:20px; text-align:center; color:white; box-shadow: 12px 12px 24px rgba(0,0,0,0.2), -12px -12px 24px rgba(255,255,255,0.2);">
     <h1 class="title" style="color:white; font-size:3rem;">Bienvenido a la Marvel API</h1>
     <p class="subtitle" style="color:white; font-size:1.3rem;">Explora personajes, equipos e identidades secretas del universo Marvel</p>
@@ -10,4 +11,39 @@
         <a class="button is-primary" href="/dashboard">Dashboard</a>
     </div>
 </div>
+
+<h2 class="subtitle" style="margin-top:3rem; text-align:center; color:white;">Personajes Activos</h2>
+<div class="columns is-multiline" style="margin-top:1rem;">
+    {% for character in characters %}
+    <div class="column is-one-third">
+        <div class="card" style="margin-bottom:2rem; border-radius:15px; overflow:hidden; box-shadow: 8px 8px 20px rgba(0,0,0,0.3);">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    {% if character.image_url %}
+                        <img src="{{ character.image_url }}" alt="{{ character.name }}">
+                    {% else %}
+                        <img src="/static/no-image.png" alt="Sin imagen">
+                    {% endif %}
+                </figure>
+            </div>
+            <div class="card-content" style="text-align:center;">
+                <p class="title is-5">{{ character.name }}</p>
+                <p class="subtitle is-6">{{ character.alias or '-' }}</p>
+                <p>{{ character.description or '-' }}</p>
+                <p><strong>Identidad:</strong> {{ character.secret_identity.real_name if character.secret_identity else "Desconocida" }}</p>
+                <p><strong>Equipos:</strong> 
+                    {% if character.teams %}
+                        {% for ct in character.teams %}
+                            {{ ct.team.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        Ninguno
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
 {% endblock %}
