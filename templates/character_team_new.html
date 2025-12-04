@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="title">Nueva Relación Personaje–Equipo</h1>
+
+<form method="post">
+    <div class="field">
+        <label class="label">Personaje</label>
+        <div class="control">
+            <div class="select is-fullwidth">
+                <select name="character_id">
+                    {% for c in characters %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Equipo</label>
+        <div class="control">
+            <div class="select is-fullwidth">
+                <select name="team_id">
+                    {% for t in teams %}
+                    <option value="{{ t.id }}">{{ t.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <button class="button is-primary" type="submit">Guardar</button>
+</form>
+{% endblock %}

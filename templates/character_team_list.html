@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="title">Relaciones Personaje–Equipo</h1>
+
+<a href="/character_team/new" class="button is-primary">Nueva Relación</a>
+
+<table class="table table-marvel is-fullwidth">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Personaje</th>
+            <th>Equipo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rel in relations %}
+        <tr>
+            <td>{{ rel.id }}</td>
+            <td>{{ rel.character.name }}</td>
+            <td>{{ rel.team.name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

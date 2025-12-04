@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="title">Nueva Identidad Secreta</h1>
+
+<form action="/identities/new" method="post" class="box">
+
+    <div class="field">
+        <label class="label">Personaje</label>
+        <div class="control">
+            <div class="select is-fullwidth">
+                <select name="character_id">
+                    {% for character in characters %}
+                        <option value="{{ character.id }}">{{ character.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Nombre real</label>
+        <div class="control">
+            <input class="input" type="text" name="real_name" required>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Fecha de nacimiento</label>
+        <div class="control">
+            <input class="input" type="date" name="birth_date">
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Lugar de nacimiento</label>
+        <div class="control">
+            <input class="input" type="text" name="place_of_birth">
+        </div>
+    </div>
+
+    <button class="button is-primary" type="submit">Crear Identidad</button>
+
+</form>
+
+{% endblock %}

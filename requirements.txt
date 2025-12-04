@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+pydantic-settings
+reportlab
+python-dotenv
+supabase
+jinja2
+aiofiles
+pandas
+openpyxl
+xlsxwriter
+psycopg2-binary
+python-multipart

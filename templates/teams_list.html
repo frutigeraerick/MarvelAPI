@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="level">
+    <h1 class="title">Equipos</h1>
+    <a href="/teams/new" class="button is-primary">Nuevo Equipo</a>
+</div>
+
+<form method="get">
+    <div class="field has-addons">
+        <div class="control">
+            <input class="input" type="text" name="q" placeholder="Buscar..." value="{{ q }}">
+        </div>
+        <div class="control">
+            <button class="button is-primary">Buscar</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-marvel is-fullwidth">
+<thead>
+<tr>
+    <th>Imagen</th>
+    <th>Nombre</th>
+    <th>Fecha de Fundación</th>
+    <th>Descripción</th>
+    <th>Miembros</th>
+</tr>
+</thead>
+
+<tbody>
+{% for team in teams %}
+<tr>
+
+    <td>
+        <figure class="image-table">
+            {% if team.image_url %}
+                <img src="{{ team.image_url }}" alt="{{ team.name }}">
+            {% else %}
+                <img src="/static/no-image.png" alt="Sin imagen">
+            {% endif %}
+        </figure>
+    </td>
+
+    <td>{{ team.name }}</td>
+    <td>{{ team.founded_date or '-' }}</td>
+    <td>{{ team.description or '-' }}</td>
+
+    <td>
+        {% if team.members %}
+            {% for member in team.members %}
+                {{ member.character.name }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marvel API</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+<style>
+
+:root {
+    --primary-color: #e62429;      
+    --secondary-color: #000000;    
+    --card-bg: #ffffff;            
+    --text-color: #ffffff;         
+    --border-radius: 12px;
+    --shadow-dark: rgba(0,0,0,0.35);
+    --shadow-light: rgba(255,255,255,0.1);
+}
+
+html, body {
+    height: 100%;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.section, .container {
+    background-color: var(--secondary-color);
+}
+
+.navbar {
+    background-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border-radius: 0 0 12px 12px;
+}
+
+.navbar-item {
+    color: var(--text-color) !important;
+    font-weight: bold;
+}
+
+.navbar-item:hover {
+    background-color: #b71c1c;
+    color: #ffffff !important;
+}
+
+.button.is-primary {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    box-shadow: 6px 6px 16px var(--shadow-dark), -6px -6px 16px var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.button.is-primary:hover {
+    background-color: #b70000;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.table {
+    background-color: var(--card-bg);
+    color: #000000;
+    border-radius: var(--border-radius);
+    box-shadow: 4px 4px 12px var(--shadow-dark);
+}
+
+.table th, .table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+}
+
+.image-character img, .image-table img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 6px 6px 20px var(--shadow-dark), -6px -6px 20px var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-character img:hover, .image-table img:hover {
+    transform: scale(1.1);
+    box-shadow: 8px 8px 24px var(--shadow-dark), -8px -8px 24px var(--shadow-light);
+}
+
+.table-marvel {
+    background-color: #0d0d0d; 
+    color: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #e62429;
+    box-shadow: 0 0 25px rgba(230, 36, 41, 0.6);
+}
+
+.table-marvel th {
+    background-color: #e62429;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.table-marvel tr {
+    transition: 0.25s ease;
+}
+
+.table-marvel tr:hover {
+    background-color: rgba(230, 36, 41, 0.15);
+    border-left: 4px solid #e62429;
+}
+
+.table-marvel td,
+.table-marvel th {
+    padding: 14px 18px;
+}
+
+.title, .subtitle {
+    color: var(--primary-color);
+}
+
+.box {
+    background-color: #1c1c1c;
+    border-radius: var(--border-radius);
+    box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.box:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+}
+
+.input, .textarea, .select select {
+    border-radius: var(--border-radius);
+    border: none;
+    background-color: #1c1c1c;
+    box-shadow: inset 6px 6px 16px var(--shadow-dark), inset -6px -6px 16px var(--shadow-light);
+    padding: 12px 16px;
+    color: var(--text-color);
+}
+
+.input:focus, .textarea:focus, .select select:focus {
+    box-shadow: 0 0 12px var(--primary-color);
+    outline: none;
+}
+
+.section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+</style>
+
+</head>
+<body>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">Marvel API</a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/characters">Personajes</a>
+            <a class="navbar-item" href="/teams">Equipos</a>
+            <a class="navbar-item" href="/identities">Identidades</a>
+            <a class="navbar-item" href="/character_team/list">Personaje–Equipo</a>
+            <a class="navbar-item" href="/dashboard">Dashboard</a>
+        </div>
+    </div>
+</nav>
+
+<section class="section">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    if ($navbarBurgers.length > 0) {
+        $navbarBurgers.forEach( el => {
+            el.addEventListener('click', () => {
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+            });
+        });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="home-container" style="background: linear-gradient(135deg, black, red); padding:3rem; border-radius:20px; text-align:center; color:white; box-shadow: 12px 12px 24px rgba(0,0,0,0.2), -12px -12px 24px rgba(255,255,255,0.2);">
+    <h1 class="title" style="color:white; font-size:3rem;">Bienvenido a la Marvel API</h1>
+    <p class="subtitle" style="color:white; font-size:1.3rem;">Explora personajes, equipos e identidades secretas del universo Marvel</p>
+    <div class="home-buttons" style="margin-top:2rem;">
+        <a class="button is-primary" href="/characters">Personajes</a>
+        <a class="button is-primary" href="/teams">Equipos</a>
+        <a class="button is-primary" href="/identities">Identidades</a>
+        <a class="button is-primary" href="/dashboard">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

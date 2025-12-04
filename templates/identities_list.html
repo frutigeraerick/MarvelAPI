@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="level">
+    <h1 class="title">Identidades Secretas</h1>
+    <a href="/identities/new" class="button is-primary">Nueva Identidad</a>
+</div>
+
+<form method="get">
+    <div class="field has-addons">
+        <div class="control">
+            <input class="input" type="text" name="q" placeholder="Buscar..." value="{{ q }}">
+        </div>
+        <div class="control">
+            <button class="button is-primary">Buscar</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-marvel is-fullwidth">
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Personaje</th>
+    <th>Nombre real</th>
+    <th>Fecha de nacimiento</th>
+    <th>Lugar de nacimiento</th>
+</tr>
+</thead>
+
+<tbody>
+{% for identity in identities %}
+<tr>
+    <td>{{ identity.id }}</td>
+    <td>{{ identity.character.name }}</td>
+    <td>{{ identity.real_name }}</td>
+    <td>{{ identity.birth_date or '-' }}</td>
+    <td>{{ identity.place_of_birth or '-' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

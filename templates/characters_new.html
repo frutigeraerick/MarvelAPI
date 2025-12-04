@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="title">Nuevo personaje</h1>
+
+<form action="/characters/new" method="post" enctype="multipart/form-data">
+    <div class="field">
+        <label class="label">Nombre</label>
+        <input class="input" type="text" name="name" required>
+    </div>
+
+    <div class="field">
+        <label class="label">Alias</label>
+        <input class="input" type="text" name="alias">
+    </div>
+
+    <div class="field">
+        <label class="label">Alignment</label>
+        <input class="input" type="text" name="alignment" required>
+    </div>
+
+    <div class="field">
+        <label class="label">Descripción</label>
+        <textarea class="textarea" name="description"></textarea>
+    </div>
+
+    <div class="field">
+        <label class="label">Imagen</label>
+        <input class="input" type="file" name="image">
+    </div>
+
+    <button class="button is-primary">Guardar</button>
+</form>
+{% endblock %}

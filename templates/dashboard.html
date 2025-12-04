@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="title has-text-centered" style="margin-bottom: 2rem;">Dashboard</h1>
+
+<div class="columns is-multiline is-centered">
+
+    <div class="column is-3">
+        <div class="dashboard-card box has-text-centered">
+            <span class="icon is-large" style="font-size: 3rem; color: var(--primary-color);">
+                🦸
+            </span>
+            <h2 class="title is-2" style="margin-top: 0.5rem;">{{ stats.characters }}</h2>
+            <p class="subtitle is-5">Personajes</p>
+        </div>
+    </div>
+
+    <div class="column is-3">
+        <div class="dashboard-card box has-text-centered">
+            <span class="icon is-large" style="font-size: 3rem; color: var(--primary-color);">
+                🛡️
+            </span>
+            <h2 class="title is-2" style="margin-top: 0.5rem;">{{ stats.teams }}</h2>
+            <p class="subtitle is-5">Equipos</p>
+        </div>
+    </div>
+
+    <div class="column is-3">
+        <div class="dashboard-card box has-text-centered">
+            <span class="icon is-large" style="font-size: 3rem; color: var(--primary-color);">
+                🎭
+            </span>
+            <h2 class="title is-2" style="margin-top: 0.5rem;">{{ stats.identities }}</h2>
+            <p class="subtitle is-5">Identidades Secretas</p>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.dashboard-card {
+    background: #111;
+    padding: 2rem 1rem;
+    border-radius: var(--border-radius);
+    transition: transform .25s ease, box-shadow .25s ease;
+    box-shadow: 0 8px 20px rgba(255,0,0,0.25);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(255,0,0,0.4);
+}
+
+.dashboard-card .subtitle {
+    color: #ccc;
+    letter-spacing: 1px;
+}
+</style>
+
+{% endblock %}
