@@ -15,7 +15,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Marvel API + Frontend HTML")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
 
 app.state.templates = templates
