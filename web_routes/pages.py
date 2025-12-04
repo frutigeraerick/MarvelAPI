@@ -62,6 +62,11 @@ def teams_page(request: Request, db: Session = Depends(get_db), q: str = ""):
         "q": q
     })
 
+@router.post("/characters/delete/{character_id}")
+def delete_character_page(character_id: int, db: Session = Depends(get_db)):
+    crud.soft_delete_character(db, character_id)
+    return RedirectResponse(url="/characters", status_code=303)
+
 @router.get("/teams/new", response_class=HTMLResponse)
 def new_team_page(request: Request):
     return request.app.state.templates.TemplateResponse("teams_new.html", {"request": request})
